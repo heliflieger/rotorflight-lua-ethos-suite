@@ -35,7 +35,7 @@ local function resolveBatteryCapacity(typeIndex)
     if not profiles then return nil end
     local v = profiles[typeIndex]
     if v == nil and type(typeIndex) == "number" then
-        v = profiles[typeIndex + 1]
+        v = profiles[typeIndex]
     end
     if type(v) == "number" then return v end
     if type(v) == "string" then return tonumber(v:match("(%d+)")) end
