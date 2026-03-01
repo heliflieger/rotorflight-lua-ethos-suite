@@ -282,7 +282,7 @@ local eventTable = {
             local key = "battery_profile"
             if value == lastValues[key] then return end
             utils.playFile("events", "alerts/battery.wav")
-            local cap = resolveBatteryCapacity(math_floor(value))
+            local cap = resolveBatteryCapacity(math_floor(value) - 1)
             if cap and system_playNumber then
                 system_playNumber(math_floor(cap + 0.5), UNIT_MILLIAMPERE_HOUR)
             end
