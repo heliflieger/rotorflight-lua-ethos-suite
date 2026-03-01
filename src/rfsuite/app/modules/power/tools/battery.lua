@@ -44,7 +44,7 @@ local function clampProfileIndex(v)
     local n = tonumber(v)
     if not n then return nil end
     n = math.floor(n)
-    if n < 1 or n > 6 then return nil end
+    if n < 0 or n > 5 then return nil end
     return n
 end
 
@@ -77,7 +77,7 @@ local function getProfileCapacity(profileIndex)
     local values = rfsuite.tasks and rfsuite.tasks.msp and rfsuite.tasks.msp.api and rfsuite.tasks.msp.api.apidata and rfsuite.tasks.msp.api.apidata.values
     local batteryValues = values and values.BATTERY_CONFIG
     if not batteryValues then return nil end
-    return tonumber(batteryValues["batteryCapacity_" .. tostring(profileIndex - 1)])
+    return tonumber(batteryValues["batteryCapacity_" .. tostring(profileIndex)])
 end
 
 local function saveProfileCapacity(profileIndex, capacity)
@@ -89,7 +89,7 @@ local function saveProfileCapacity(profileIndex, capacity)
     if v < CAPACITY_PROFILE_MIN then v = CAPACITY_PROFILE_MIN end
     if v > CAPACITY_PROFILE_MAX then v = CAPACITY_PROFILE_MAX end
     local finalVal = math.floor(v + 0.5)
-    batteryValues["batteryCapacity_" .. tostring(profileIndex - 1)] = finalVal
+    batteryValues["batteryCapacity_" .. tostring(profileIndex)] = finalVal
 
     if rfsuite.session.batteryConfig and rfsuite.session.batteryConfig.profiles then
         rfsuite.session.batteryConfig.profiles[profileIndex] = finalVal
@@ -101,7 +101,7 @@ local function updateDynamicUi(self, editingType, activeType)
     local headerProfile = activeType
     if headerProfile ~= nil then
         pcall(function()
-            rfsuite.app.ui.setHeaderTitle(headerBase .. " #" .. tostring(headerProfile))
+            rfsuite.app.ui.setHeaderTitle(headerBase .. " #" .. tostring(headerProfile + 1))
         end)
     else
         pcall(function()
@@ -134,7 +134,7 @@ local function postLoad(self)
     local activeType = clampProfileIndex(rfsuite.session.activeBatteryType)
     local editingType = activeType
     if editingType == nil then
-        editingType = clampProfileIndex(getFieldValue(self, "batteryProfile")) or 1
+        editingType = clampProfileIndex(getFieldValue(self, "batteryProfile")) or 0
     end
     setFieldValue(self, "batteryProfile", editingType)
     local capacity = getProfileCapacity(editingType)
